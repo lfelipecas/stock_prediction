@@ -1,0 +1,11 @@
+# Ignore the content of the data directory
+data/*
+
+# Ignore the content of the model directory
+model/*
+
+# Ignore the __pycache__ directory
+src/__pycache__/
+
+# Ignore compiled Python files
+*.pyc
