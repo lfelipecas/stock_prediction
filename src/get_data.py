@@ -15,10 +15,14 @@ def download_data(ticker: str, start_date: str, end_date: str, interval: str = "
     return data
 
 if __name__ == "__main__":
-    # Definir la ruta del archivo CSV
-    data_directory = '../data'
+    # Obtener la ruta absoluta del directorio actual del script
+    script_dir = os.path.dirname(os.path.abspath(__file__))
+
+    # Definir la ruta del directorio de datos
+    data_directory = os.path.join(script_dir, '..', 'data')
     if not os.path.exists(data_directory):
         os.makedirs(data_directory)
         
+    # Descargar los datos y guardarlos en un archivo CSV en el directorio de datos
     data = download_data("NFLX", "2014-01-01", "2023-12-31")
     data.to_csv(os.path.join(data_directory, 'nflx_data.csv'))
