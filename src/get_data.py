@@ -1,4 +1,5 @@
 import yfinance as yf
+import os
 
 def download_data(ticker: str, start_date: str, end_date: str, interval: str = "1d"):
     """
@@ -14,5 +15,10 @@ def download_data(ticker: str, start_date: str, end_date: str, interval: str = "
     return data
 
 if __name__ == "__main__":
+    # Definir la ruta del archivo CSV
+    data_directory = '../data'
+    if not os.path.exists(data_directory):
+        os.makedirs(data_directory)
+        
     data = download_data("NFLX", "2014-01-01", "2023-12-31")
-    data.to_csv('../data/nflx_data.csv')  # Guardar los datos en un archivo CSV para su posterior uso
+    data.to_csv(os.path.join(data_directory, 'nflx_data.csv'))
