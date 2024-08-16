@@ -20,7 +20,6 @@ def create_datasets(data, n_days=7):
         X.append(data.iloc[i:i + n_days].values)
         Y.append(data.iloc[i + n_days, 0])  # Suponiendo que 'Close' es la primera columna
     X, Y = np.array(X), np.array(Y)
-    X = X.reshape(X.shape[0], X.shape[1], X.shape[2])
     return X, Y
 
 if __name__ == "__main__":

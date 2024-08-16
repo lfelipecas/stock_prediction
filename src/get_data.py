@@ -9,9 +9,10 @@ def download_data(ticker: str, start_date: str, end_date: str, interval: str = "
     :param start_date: Fecha de inicio en formato 'YYYY-MM-DD'.
     :param end_date: Fecha de fin en formato 'YYYY-MM-DD'.
     :param interval: Intervalo de tiempo para los datos, por defecto es '1d' (diario).
-    :return: DataFrame con los datos históricos de precios.
+    :return: DataFrame con los datos históricos de precios ordenados por fecha.
     """
     data = yf.download(ticker, start=start_date, end=end_date, interval=interval)
+    data.sort_index(ascending=True, inplace=True)  # Ordenar por fecha, desde la más antigua hasta la más reciente
     return data
 
 if __name__ == "__main__":

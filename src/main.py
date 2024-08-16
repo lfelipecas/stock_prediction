@@ -1,12 +1,12 @@
 import os
+import pandas as pd
+import numpy as np
 from get_data import download_data
 from clean_data import clean_data
 from preprocess_data import preprocess_data
 from split_data import create_datasets
 from train_model import train_model
 from evaluate_model import evaluate_model
-import pandas as pd
-import numpy as np
 from sklearn.model_selection import train_test_split
 
 def main():
@@ -17,11 +17,8 @@ def main():
     data_directory = os.path.join(script_dir, '..', 'data')
     model_directory = os.path.join(script_dir, '..', 'model')
     
-    if not os.path.exists(data_directory):
-        os.makedirs(data_directory)
-    
-    if not os.path.exists(model_directory):
-        os.makedirs(model_directory)
+    os.makedirs(data_directory, exist_ok=True)
+    os.makedirs(model_directory, exist_ok=True)
     
     # Paso 1: Descargar los datos
     print("Descargando datos...")

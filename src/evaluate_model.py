@@ -21,14 +21,13 @@ def evaluate_model(X_test, Y_test, scaler):
     # Realizar predicciones
     predicted_prices = model.predict(X_test)
 
-    # Crear un array vacío para almacenar las predicciones escaladas junto con columnas dummy
-    dummy_zeros = np.zeros((predicted_prices.shape[0], scaler.n_features_in_))
-    dummy_zeros[:, 0] = predicted_prices.flatten()  # Insertar las predicciones en la primera columna
-
     # Invertir la normalización para obtener precios reales
-    inverse_transformed = scaler.inverse_transform(dummy_zeros)
-    predicted_prices = inverse_transformed[:, 0]  # Extraer solo la columna correspondiente a las predicciones
-    real_prices = scaler.inverse_transform(np.hstack([Y_test.reshape(-1, 1), np.zeros((Y_test.shape[0], scaler.n_features_in_ - 1))]))[:, 0]
+    predicted_prices = scaler.inverse_transform(
+        np.hstack((predicted_prices, np.zeros((predicted_prices.shape[0], scaler.n_features_in_ - 1))))
+    )[:, 0]
+    real_prices = scaler.inverse_transform(
+        np.hstack((Y_test.reshape(-1, 1), np.zeros((Y_test.shape[0], scaler.n_features_in_ - 1))))
+    )[:, 0]
 
     # Calcular métricas de evaluación
     mse = mean_squared_error(real_prices, predicted_prices)
@@ -57,7 +56,7 @@ if __name__ == "__main__":
     print(f"Mean Absolute Error (MAE): {mae}")
     print(f"R^2 Score: {r2}")
 
-    # Opcional: Guardar las predicciones y los valores reales en un archivo CSV para análisis adicional
+    # Guardar los resultados de la evaluación en un archivo CSV para análisis adicional
     results = pd.DataFrame({
         'Real Prices': real_prices.flatten(),
         'Predicted Prices': predicted_prices.flatten()

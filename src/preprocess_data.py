@@ -39,19 +39,11 @@ if __name__ == "__main__":
     input_file_path = os.path.join(data_directory, 'nflx_cleaned_data.csv')
     output_file_path = os.path.join(data_directory, 'nflx_preprocessed_data.csv')
     
-    # Verificar que el directorio de salida existe
-    if not os.path.exists(data_directory):
-        os.makedirs(data_directory)
-    
     # Preprocesar los datos
     processed_data, scaler = preprocess_data(input_file_path, output_file_path)
     
     # Guardar el escalador para uso futuro
     scaler_path = os.path.join(script_dir, '..', 'model', 'scaler.pkl')
-    model_directory = os.path.dirname(scaler_path)
-    if not os.path.exists(model_directory):
-        os.makedirs(model_directory)
-    
     pd.to_pickle(scaler, scaler_path)
-    print(f"Datos preprocesados guardados en {output_file_path}")
+    print(f"Datos preprocesados guardados en {output_path}")
     print(f"Escalador guardado en {scaler_path}")
