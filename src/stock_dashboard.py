@@ -1,104 +1,86 @@
+import os
 import streamlit as st
 import pandas as pd
 import numpy as np
 from tensorflow.keras.models import load_model
-import time
 
-# Cargar el modelo y el escalador
-model_path = '../model/nflx_lstm_model.h5'
-scaler_path = '../model/scaler.pkl'
-data_path = '../data/nflx_preprocessed_data.csv'
-
+# Cargar el modelo LSTM
+script_dir = os.path.dirname(os.path.abspath(__file__))
+model_path = os.path.join(script_dir, "../model/nflx_lstm_model.h5")
 model = load_model(model_path)
-scaler = pd.read_pickle(scaler_path)
+
+# Cargar los datos preprocesados
+data_path = os.path.join(script_dir, "../data/nflx_preprocessed_data.csv")
 data = pd.read_csv(data_path)
 
-# Interfaz de usuario para seleccionar el tipo de precio y la ventana de predicción
-st.title("Stock Price Prediction Dashboard")
-price_type = st.selectbox("Select Price Type", ["Open", "High", "Low", "Close"])
-n_days_option = st.selectbox("Select Prediction Window Size", ["7 Days", "14 Days", "21 Days", "1 Month", "2 Months", "3 Months", "4 Months", "5 Months", "6 Months"])
-n_days_mapping = {"7 Days": 7, "14 Days": 14, "21 Days": 21, "1 Month": 30, "2 Months": 60, "3 Months": 90, "4 Months": 120, "5 Months": 150, "6 Months": 180}
-n_days = n_days_mapping[n_days_option]
+# Convertir las fechas a datetime
+data['Date'] = pd.to_datetime(data['Date'])
 
-# Preparar los datos históricos con todas las características
-def prepare_data(data, n_days):
-    X, Y = [], []
-    for i in range(len(data) - n_days):
-        X.append(data[['Open', 'High', 'Low', 'Close']].iloc[i:i + n_days].values)
-        Y.append(data[price_type].iloc[i + n_days])
-    X = np.array(X)
-    Y = np.array(Y)
-    return X, Y
-
-X, Y = prepare_data(data, n_days)
-
-# Verificar las dimensiones de entrada
-st.write(f"X shape (Historical): {X.shape}")
-st.write(f"Y shape (Historical): {Y.shape}")
-
-# Predicción de precios históricos
-predicted_prices_historical = model.predict(X)
-
-# Desescalar precios históricos
-predicted_prices_historical = scaler.inverse_transform(np.hstack((predicted_prices_historical, np.zeros((predicted_prices_historical.shape[0], scaler.n_features_in_ - 1)))))[:, 0]
-real_prices = scaler.inverse_transform(np.hstack((Y.reshape(-1, 1), np.zeros((Y.shape[0], scaler.n_features_in_ - 1)))))[:, 0]
-
-# Crear un DataFrame para graficar los precios históricos
-historical_chart_data = pd.DataFrame({
-    "Real Prices": real_prices,
-    "Predicted Prices": predicted_prices_historical
-})
-
-# Predicción futura
-def predict_future_prices(data, n_days, future_days):
-    last_data = data[['Open', 'High', 'Low', 'Close']].iloc[-n_days:].values
-    predictions = []
+# Predecir precios históricos
+def predict_historical_prices(data):
+    X = data[["Adj Close_scaled"]].values
     
-    for _ in range(future_days):
-        last_data_scaled = scaler.transform(last_data)
-        last_data_scaled = last_data_scaled.reshape((1, last_data_scaled.shape[0], last_data_scaled.shape[1]))
-        predicted_price = model.predict(last_data_scaled)
-        predicted_price_descaled = scaler.inverse_transform(
-            np.hstack((predicted_price, np.zeros((predicted_price.shape[0], scaler.n_features_in_ - 1))))
-        )[:, 0]
-        
-        predictions.append(predicted_price_descaled[0])
-        
-        # Actualizar los datos para la próxima predicción
-        new_data = np.append(last_data[1:], [[predicted_price_descaled[0]] * 4], axis=0)
-        last_data = new_data
+    # Crear una lista para almacenar las secuencias de 7 días
+    X_sequences = []
     
-    return predictions
+    # Generar las secuencias de 7 días
+    for i in range(len(X) - 7):
+        X_sequences.append(X[i:i + 7])
+    
+    # Convertir la lista a un array numpy y darle la forma correcta
+    X_sequences = np.array(X_sequences)
+    
+    predicted_prices = model.predict(X_sequences)
+    
+    data['Adj Close_scaled_Predicted'] = np.nan
+    data.loc[7:, 'Adj Close_scaled_Predicted'] = predicted_prices.flatten()
 
-# Realizar la predicción futura
-future_predictions = predict_future_prices(data, n_days, n_days)
+    return data
 
-# Crear un DataFrame para graficar las predicciones futuras
-future_dates = pd.date_range(start=data['Date'].iloc[-1], periods=n_days + 1)[1:]
-future_chart_data = pd.DataFrame({
-    "Date": future_dates,
-    "Predicted Future Prices": future_predictions
-})
+data = predict_historical_prices(data)
 
-# Mostrar gráficos de líneas con animación de precios históricos
-st.write("Historical Real and Predicted Prices Over Time")
+# Gráfico de rendimiento histórico del modelo
+st.subheader("Historical Model Performance")
 
-# Crear la gráfica de líneas de precios históricos
-progress_bar = st.progress(0)
-status_text = st.empty()
-chart = st.line_chart(historical_chart_data.iloc[0:1])
+def plot_historical_performance():
+    st.line_chart(data.set_index('Date')[['Adj Close_scaled', 'Adj Close_scaled_Predicted']])
 
-for i in range(1, len(historical_chart_data)):
-    chart.add_rows(historical_chart_data.iloc[i:i+1])
-    status_text.text(f"{int((i+1)/len(historical_chart_data)*100)}% Complete")
-    progress_bar.progress(int((i+1)/len(historical_chart_data)*100))
-    time.sleep(0.01)
+plot_historical_performance()
 
-progress_bar.empty()
+# Función para preparar la entrada del modelo para predicciones futuras
+def prepare_input_for_prediction(last_known_values, timesteps=7):
+    if last_known_values.shape[0] < timesteps:
+        padding = np.zeros((timesteps - last_known_values.shape[0], 1))
+        X_input = np.vstack((padding, last_known_values))
+    else:
+        X_input = last_known_values[-timesteps:]
+    
+    X_input = np.reshape(X_input, (1, timesteps, 1))
+    return X_input
 
-# Mostrar la predicción futura
-st.write(f"Predicted {price_type} Prices for the Next {n_days} Days")
-st.line_chart(future_chart_data.set_index("Date"))
+# Predicciones futuras
+st.subheader("Future Predictions")
+n_days_future = st.selectbox("Select Prediction Window (days):", [7, 14, 30, 60, 90, 180])
 
-# Botón para recargar
-st.button("Re-run")
+def plot_future_predictions(n_days):
+    last_known_values = data[["Adj Close_scaled"]].dropna().values
+    X_input = prepare_input_for_prediction(last_known_values, timesteps=7)
+    
+    future_predictions = []
+    for _ in range(n_days):
+        pred = model.predict(X_input)[0]
+        future_predictions.append(pred)
+        X_input = np.append(X_input[:, 1:, :], [[pred]], axis=1)
+
+    future_predictions = np.array(future_predictions)
+    future_dates = pd.date_range(start=data['Date'].iloc[-1], periods=n_days + 1)[1:]
+    
+    future_df = pd.DataFrame({
+        'Date': future_dates,
+        'Predicted Adj Close_scaled Prices': future_predictions.flatten()
+    })
+    future_df.set_index('Date', inplace=True)
+    
+    st.line_chart(future_df)
+
+plot_future_predictions(n_days_future)

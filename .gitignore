@@ -7,5 +7,9 @@ model/*
 # Ignore the __pycache__ directory
 src/__pycache__/
 
+# Ignore model_summary.py file
+/src/model_summary.py
+
+
 # Ignore compiled Python files
 *.pyc
