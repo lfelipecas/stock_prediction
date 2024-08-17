@@ -7,12 +7,14 @@ def preprocess_data(file_path: str, output_path: str):
     data = pd.read_csv(file_path)
     scaler = MinMaxScaler(feature_range=(0, 1))
     
+    # Apply MinMax scaling to the 'Adj Close' column
     data['Adj Close_scaled'] = scaler.fit_transform(data[['Adj Close']])
 
-    # Guardar solo la columna preprocesada y la fecha
+    # Save only the preprocessed column and date
     data_scaled_df = pd.DataFrame({'Date': data['Date'], 'Adj Close_scaled': data['Adj Close_scaled']})
     data_scaled_df.to_csv(output_path, index=False)
 
+    # Save the scaler for future use
     scaler_path = os.path.join(os.path.dirname(output_path), 'scaler.pkl')
     joblib.dump(scaler, scaler_path)
 
@@ -26,5 +28,5 @@ if __name__ == "__main__":
 
     processed_data, scaler = preprocess_data(input_file_path, output_file_path)
 
-    print(f"Datos preprocesados guardados en {output_file_path}")
-    print(f"Escalador guardado en {os.path.join(data_directory, 'scaler.pkl')}")
+    print(f"Preprocessed data saved to {output_file_path}")
+    print(f"Scaler saved to {os.path.join(data_directory, 'scaler.pkl')}")

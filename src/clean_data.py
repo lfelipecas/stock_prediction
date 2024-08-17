@@ -4,13 +4,13 @@ import os
 def clean_data(file_path: str):
     data = pd.read_csv(file_path)
     
-    # Convertir la columna 'Adj Close' a numérico y manejar cualquier error
+    # Convert 'Adj Close' column to numeric and handle any errors
     data['Adj Close'] = pd.to_numeric(data['Adj Close'], errors='coerce')
     
-    # Rellenar valores faltantes con la mediana solo en la columna 'Adj Close'
-    data['Adj Close'].fillna(data['Adj Close'].median(), inplace=True)
+    # Fill missing values with the median only in the 'Adj Close' column
+    data['Adj Close'] = data['Adj Close'].fillna(data['Adj Close'].median())
     
-    # Eliminar cualquier fila restante que aún tenga valores NaN (no debería haber ninguna después de la imputación)
+    # Drop any remaining rows that still have NaN values (shouldn't be any after imputation)
     data.dropna(inplace=True)
     
     return data
@@ -23,4 +23,4 @@ if __name__ == "__main__":
 
     cleaned_data = clean_data(input_file_path)
     cleaned_data.to_csv(output_file_path, index=False)
-    print(f"Archivo guardado en {output_file_path}")
+    print(f"File saved to {output_file_path}")

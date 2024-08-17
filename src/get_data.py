@@ -3,13 +3,13 @@ import os
 
 def download_data(ticker: str, start_date: str = None, end_date: str = None, interval: str = "1d"):
     """
-    Descarga los datos históricos de precios de acciones desde Yahoo Finance.
-    
-    :param ticker: El símbolo de la acción, por ejemplo, 'NFLX'.
-    :param start_date: Fecha de inicio en formato 'YYYY-MM-DD'. Si no se especifica, se obtiene el dato más antiguo disponible.
-    :param end_date: Fecha de fin en formato 'YYYY-MM-DD'. Si no se especifica, se obtiene el dato más reciente disponible.
-    :param interval: Intervalo de tiempo para los datos, por defecto es '1d' (diario).
-    :return: DataFrame con los datos históricos de precios.
+    Downloads historical stock price data from Yahoo Finance.
+
+    :param ticker: The stock symbol, e.g., 'NFLX'.
+    :param start_date: Start date in 'YYYY-MM-DD' format. If not specified, the earliest available data is retrieved.
+    :param end_date: End date in 'YYYY-MM-DD' format. If not specified, the most recent data is retrieved.
+    :param interval: Time interval for the data, default is '1d' (daily).
+    :return: DataFrame with historical price data.
     """
     data = yf.download(ticker, start=start_date, end=end_date, interval=interval)
     return data[['Adj Close']]
@@ -20,7 +20,7 @@ if __name__ == "__main__":
     if not os.path.exists(data_directory):
         os.makedirs(data_directory)
         
-    data = download_data("NFLX")  # Descargar todos los datos disponibles
+    data = download_data("NFLX")  # Download all available data
     data.to_csv(os.path.join(data_directory, 'nflx_data.csv'))
 
-    print(f"Datos guardados en {os.path.join(data_directory, 'nflx_data.csv')}")
+    print(f"Data saved in {os.path.join(data_directory, 'nflx_data.csv')}")
