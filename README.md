@@ -27,16 +27,22 @@ The project is organized into several directories and files, each serving a spec
 │   ├── stock_dashboard.py
 │   ├── train_model.py
 ├── tests/
+│   ├── test_clean_data.py
 │   ├── test_evaluate_model.py
+│   ├── test_get_data.py
+│   ├── test_main.py
+│   ├── test_preprocess_data.py
+│   ├── test_split_data.py
+│   ├── test_train_model.py
 ├── requirements.txt
-├── README.md
+└── README.md
 
 ## Installation
 To set up this project, follow the steps below:
 
 1. **Clone the repository**:
    ```
-   git clone <repository_url>
+   git clone https://github.com/lfelipecas/stock_prediction
    cd stock_prediction
    ```
 
@@ -45,6 +51,27 @@ To set up this project, follow the steps below:
    ```
    pip install -r requirements.txt
    ```
+
+## Usage Guide
+
+### Running the Main Script
+To execute the entire pipeline, simply run:
+```
+python src/main.py
+```
+This will download data, clean it, preprocess it, split it into training/testing sets, train the model, and evaluate the model's performance.
+
+### Generating CSV Files
+All necessary CSV files will be automatically generated in the `data/` directory as you run the scripts. These include cleaned, preprocessed data, and the evaluation results.
+
+### Creating and Using Models
+The LSTM model is trained using the `train_model.py` script and saved as `nflx_lstm_model.h5`. The scaler used for data preprocessing is saved as `scaler.pkl`. These files are used during evaluation and prediction.
+
+### Using the Dashboard
+To interact with the predictions and visualize them, run the following command to start the Streamlit dashboard:
+```
+streamlit run src/stock_dashboard.py
+```
 
 ## Description of the Scripts in `src/`
 
@@ -96,23 +123,20 @@ This script creates an interactive dashboard using Streamlit to visualize histor
 - **Usage**: Run `stock_dashboard.py` to launch the dashboard.
 - **Features**: Visualization of historical model performance, future predictions.
 
-## Usage Guide
+## Running Unit Tests
 
-### Running the Main Script
-To execute the entire pipeline, simply run:
-```
-python src/main.py
-```
-This will download data, clean it, preprocess it, split it into training/testing sets, train the model, and evaluate the model's performance.
+The project includes unit tests for the major functionalities. These tests are located in the `tests/` directory. It is recommended to run these tests to ensure everything is working correctly.
 
-### Generating CSV Files
-All necessary CSV files will be automatically generated in the `data/` directory as you run the scripts. These include cleaned, preprocessed data, and the evaluation results.
+1. **Run all tests**:
+   ```
+   pytest tests/
+   ```
 
-### Creating and Using Models
-The LSTM model is trained using the `train_model.py` script and saved as `nflx_lstm_model.h5`. The scaler used for data preprocessing is saved as `scaler.pkl`. These files are used during evaluation and prediction.
-
-### Using the Dashboard
-To interact with the predictions and visualize them, run the following command to start the Streamlit dashboard:
-```
-streamlit run src/stock_dashboard.py
-```
+2. **Test Files**:
+   - `test_clean_data.py`: Tests for data cleaning.
+   - `test_evaluate_model.py`: Tests for model evaluation.
+   - `test_get_data.py`: Tests for data downloading.
+   - `test_main.py`: Tests for the main script's workflow.
+   - `test_preprocess_data.py`: Tests for data preprocessing.
+   - `test_split_data.py`: Tests for data splitting.
+   - `test_train_model.py`: Tests for model training.
