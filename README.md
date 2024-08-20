@@ -4,8 +4,8 @@
 This project focuses on predicting stock prices using Long Short-Term Memory (LSTM) networks. The goal is to build a robust model that can forecast future stock prices based on historical data. The project is particularly suited for data scientists, machine learning enthusiasts, and financial analysts interested in applying deep learning to time series forecasting.
 
 ## Project Structure
-The project is organized into several directories and files, each serving a specific purpose:
-
+After running the `main.py` the project will be organized into several directories and files, each serving a specific purpose:
+```
 ├── data/
 │   ├── nflx_data.csv
 │   ├── nflx_cleaned_data.csv
@@ -36,6 +36,7 @@ The project is organized into several directories and files, each serving a spec
 │   ├── test_train_model.py
 ├── requirements.txt
 └── README.md
+```
 
 ## Installation
 To set up this project, follow the steps below:
@@ -72,6 +73,8 @@ To interact with the predictions and visualize them, run the following command t
 ```
 streamlit run src/stock_dashboard.py
 ```
+This dashboard allows you to select a time frame ranging from one week to six months to predict the daily stock price. You can visualize historical model performance and future predictions interactively.
+
 
 ## Description of the Scripts in `src/`
 
