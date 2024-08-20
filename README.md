@@ -47,8 +47,15 @@ To set up this project, follow the steps below:
    cd stock_prediction
    ```
 
+2. **Set up a virtual environmen**:
+   Ensure you are using Python 3.9.19. You can create a virtual environment using `conda`:
+   ```
+   conda create -n myenv python=3.9.19
+   conda activate myenv
+   ```   
+
 2. **Install dependencies**:
-   Ensure you are using Python 3.9.19. Install the necessary libraries using:
+   Install the necessary libraries using:
    ```
    pip install -r requirements.txt
    ```
