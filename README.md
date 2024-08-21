@@ -88,7 +88,7 @@ This dashboard allows you to select a time frame ranging from one week to six mo
 
 Here is a preview of the dashboard:
 
-![Stock Prediction Dashboard](.image.png)
+![Stock Prediction Dashboard](./image.png)
 
 The above dashboard shows the historical model performance, comparing the actual and predicted adjusted closing prices over time. Additionally, you can select a future prediction window, and the model will predict future stock prices based on the chosen timeframe.
 
