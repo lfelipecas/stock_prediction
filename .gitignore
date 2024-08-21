@@ -10,6 +10,8 @@ src/__pycache__/
 # Ignore model_summary.py file
 /src/model_summary.py
 
+# Ignore images
+*.png
 
 # Ignore compiled Python files
 *.pyc

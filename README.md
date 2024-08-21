@@ -1,7 +1,10 @@
 # Stock Price Prediction with LSTM
 
 ## Introduction
-This project focuses on predicting stock prices using Long Short-Term Memory (LSTM) networks. The goal is to build a robust model that can forecast future stock prices based on historical data. The project is particularly suited for data scientists, machine learning enthusiasts, and financial analysts interested in applying deep learning to time series forecasting.
+This project focuses on predicting the stock price of Netflix using Long Short-Term Memory (LSTM) networks, leveraging historical data downloaded from Yahoo Finance. The primary goal is to build a robust model capable of forecasting future stock prices based on past performance. By applying deep learning techniques, particularly LSTM networks known for their effectiveness in time series forecasting, this project aims to provide accurate predictions that can assist in making informed investment decisions.
+
+This project is particularly suited for data scientists, machine learning enthusiasts, and financial analysts who are interested in applying deep learning models to real-world financial data. Through this project, users can gain insights into the stock market trends and explore the potential of LSTM networks in forecasting future stock prices.
+
 
 ## Project Structure
 After running the `main.py` the project will be organized into several directories and files, each serving a specific purpose:
@@ -81,6 +84,12 @@ To interact with the predictions and visualize them, run the following command t
 streamlit run src/stock_dashboard.py
 ```
 This dashboard allows you to select a time frame ranging from one week to six months to predict the daily stock price. You can visualize historical model performance and future predictions interactively.
+
+Here is a preview of the dashboard:
+
+![Stock Prediction Dashboard](.image.png)
+
+The above dashboard shows the historical model performance, comparing the actual and predicted adjusted closing prices over time. Additionally, you can select a future prediction window, and the model will predict future stock prices based on the chosen timeframe.
 
 
 ## Description of the Scripts in `src/`
