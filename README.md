@@ -37,6 +37,7 @@ After running the `main.py` the project will be organized into several directori
 │   ├── test_preprocess_data.py
 │   ├── test_split_data.py
 │   ├── test_train_model.py
+├── image.png
 ├── requirements.txt
 └── README.md
 ```
